@@ -4,6 +4,9 @@
 
 #include "pch.h"
 #include "Game.h"
+#include "WICTextureLoader.h"
+#include "d3d11.h"
+#include "SimpleMath.h" 
 
 extern void ExitGame();
 
@@ -70,6 +73,15 @@ void Game::Render()
     Clear();
 
     // TODO: Add your rendering code here.
+	//*
+	m_spriteBatch->Begin();
+
+	m_spriteBatch->Draw(m_texture.Get(), m_screenPos, nullptr, Colors::White,
+		0.f, m_origin);
+
+	m_spriteBatch->End();
+
+	//*
 
     Present();
 }
@@ -154,7 +166,7 @@ void Game::CreateDevice()
     UINT creationFlags = 0;
 
 #ifdef _DEBUG
-    creationFlags |= D3D11_CREATE_DEVICE_DEBUG;
+    //creationFlags |= D3D11_CREATE_DEVICE_DEBUG;
 #endif
 
     static const D3D_FEATURE_LEVEL featureLevels [] =
@@ -230,6 +242,25 @@ void Game::CreateDevice()
         (void)m_d3dContext.As(&m_d3dContext1);
 
     // TODO: Initialize device dependent objects here (independent of window size).
+	//*
+	m_spriteBatch = std::make_unique<SpriteBatch>(m_d3dContext.Get());
+
+	ComPtr<ID3D11Resource> resource;
+	DX::ThrowIfFailed(
+		CreateWICTextureFromFile(m_d3dDevice.Get(), L"Images\\player.png",
+			resource.GetAddressOf(),
+			m_texture.ReleaseAndGetAddressOf()));
+
+	ComPtr<ID3D11Texture2D> cat;
+	DX::ThrowIfFailed(resource.As(&cat));
+
+	CD3D11_TEXTURE2D_DESC catDesc;
+	cat->GetDesc(&catDesc);
+
+	m_origin.x = float(catDesc.Width / 2);
+	m_origin.y = float(catDesc.Height / 2);
+	//*
+
 }
 
 // Allocate all memory resources that change on a window SizeChanged event.
@@ -349,11 +380,18 @@ void Game::CreateResources()
     DX::ThrowIfFailed(m_d3dDevice->CreateDepthStencilView(depthStencil.Get(), &depthStencilViewDesc, m_depthStencilView.ReleaseAndGetAddressOf()));
 
     // TODO: Initialize windows-size dependent objects here.
+	//*
+	m_screenPos.x = backBufferWidth / 2.f;
+	m_screenPos.y = backBufferHeight / 2.f;
+	//*
 }
 
 void Game::OnDeviceLost()
 {
     // TODO: Add Direct3D resource cleanup here.
+	//*
+	m_spriteBatch.reset();
+	//*
 
     m_depthStencilView.Reset();
     m_renderTargetView.Reset();
