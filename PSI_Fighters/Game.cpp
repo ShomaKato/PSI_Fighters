@@ -39,6 +39,9 @@ void Game::Initialize(HWND window, int width, int height)
     m_timer.SetFixedTimeStep(true);
     m_timer.SetTargetElapsedSeconds(1.0 / 60);
     */
+
+	//* キーボードの初期化
+	m_keyboard = std::make_unique<Keyboard>();
 }
 
 // Executes the basic game loop.
@@ -59,6 +62,22 @@ void Game::Update(DX::StepTimer const& timer)
 
     // TODO: Add your game logic here.
     elapsedTime;
+	
+	//* キーボードの状態取得
+	auto kb = m_keyboard->GetState();
+	if (kb.Escape)
+		PostQuitMessage(0);
+
+	if (kb.A)
+	{
+		m_screenPos.x = m_screenPos.x - 2.5f;
+	}
+	if (kb.D)
+	{
+		m_screenPos.x = m_screenPos.x + 2.5f;
+	}
+
+	//*
 }
 
 // Draws the scene.
@@ -73,7 +92,9 @@ void Game::Render()
     Clear();
 
     // TODO: Add your rendering code here.
-	//*
+
+
+	//* スプライトバッチの描画
 	m_spriteBatch->Begin();
 
 	m_spriteBatch->Draw(m_texture.Get(), m_screenPos, nullptr, Colors::White,
@@ -242,7 +263,9 @@ void Game::CreateDevice()
         (void)m_d3dContext.As(&m_d3dContext1);
 
     // TODO: Initialize device dependent objects here (independent of window size).
-	//*
+
+
+	//* スプライトバッチの何かしら
 	m_spriteBatch = std::make_unique<SpriteBatch>(m_d3dContext.Get());
 
 	ComPtr<ID3D11Resource> resource;
@@ -380,7 +403,8 @@ void Game::CreateResources()
     DX::ThrowIfFailed(m_d3dDevice->CreateDepthStencilView(depthStencil.Get(), &depthStencilViewDesc, m_depthStencilView.ReleaseAndGetAddressOf()));
 
     // TODO: Initialize windows-size dependent objects here.
-	//*
+
+	//* スクリーン座標か何か
 	m_screenPos.x = backBufferWidth / 2.f;
 	m_screenPos.y = backBufferHeight / 2.f;
 	//*
@@ -389,7 +413,8 @@ void Game::CreateResources()
 void Game::OnDeviceLost()
 {
     // TODO: Add Direct3D resource cleanup here.
-	//*
+
+	//* スプライトバッチの終了か何か
 	m_spriteBatch.reset();
 	//*
 
