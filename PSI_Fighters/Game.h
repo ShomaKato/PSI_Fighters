@@ -8,6 +8,7 @@
 #include "SpriteBatch.h"
 #include "SimpleMath.h"
 #include <Keyboard.h>
+#include <Mouse.h>
 
 
 // A basic game implementation that creates a D3D11 device and
@@ -67,16 +68,53 @@ private:
     DX::StepTimer                                   m_timer;
 
 
-	// プレイヤテクスチャ
-	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_texture;
 
-	// スプライトバッチとあと座標
+
+
+
+
+	//* スプライトバッチと何かの座標
 	std::unique_ptr<DirectX::SpriteBatch> m_spriteBatch;
-	DirectX::SimpleMath::Vector2 m_screenPos;
 	DirectX::SimpleMath::Vector2 m_origin;
 
+	//* 仮の地面
+	int landHeight = 500;
+
+	//* 重力
+	float gravity = 0.5f;
+
+
+	/* ===== ↓あとでプレイヤクラスに移動するもの↓ ===== */
+
+	// プレイヤテクスチャ
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_playerTexture;
+	// 速度
+	DirectX::SimpleMath::Vector2 m_playerV;
+	// 加速度
+	DirectX::SimpleMath::Vector2 m_playerA;
+	// 座標
+	DirectX::SimpleMath::Vector2 m_playerPos;
 	// キーボード
 	std::unique_ptr<DirectX::Keyboard> m_keyboard;
+	//// マウス
+	//std::unique_ptr<Mouse> m_mouse;
+
+	/* ===== ↑あとでプレイヤクラスに移動するもの↑ ===== */
+
+
+
+	/* ===== ↓あとでオブスタクルクラスに移動するもの↓ ===== */
+
+	// 障害物テクスチャ
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_obstacleTexture;
+	// 速度
+	DirectX::SimpleMath::Vector2 m_obstacleV;
+	// 加速度
+	DirectX::SimpleMath::Vector2 m_obstacleA;
+	// 座標
+	DirectX::SimpleMath::Vector2 m_obstaclePos;
+
+	/* ===== ↑あとでオブスタクルクラスに移動するもの↑===== */
 
 
 };

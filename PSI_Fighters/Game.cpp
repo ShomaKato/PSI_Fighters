@@ -42,6 +42,12 @@ void Game::Initialize(HWND window, int width, int height)
 
 	//* キーボードの初期化
 	m_keyboard = std::make_unique<Keyboard>();
+	//* マウスの初期化
+	//m_mouse = std::make_unique<Mouse>();
+
+	//* 重力加速度
+	m_playerA.y = gravity;
+	m_obstacleA.y = gravity;
 }
 
 // Executes the basic game loop.
@@ -63,21 +69,77 @@ void Game::Update(DX::StepTimer const& timer)
     // TODO: Add your game logic here.
     elapsedTime;
 	
-	//* キーボードの状態取得
+
+
+	/* ===== ↓あとでプレイヤクラスに移動するもの↓ ===== */
+
+	// 速度に加速度を足す
+	m_playerV.x += m_playerA.x;	
+	m_playerV.y += m_playerA.y;
+	// 位置に速度を足す
+	m_playerPos.x += m_playerV.x;
+	m_playerPos.y += m_playerV.y;
+	// 落下速度が早すぎたらちょうどいいとこで加速が止まる
+	if (m_playerV.y > 50)
+	{
+		m_playerV.y = 50;
+	}
+
+	// 地面との雑判定
+	if (m_playerPos.y > landHeight)
+	{
+		m_playerPos.y = landHeight;
+		m_playerV.y = 0;
+	}
+
+	// キーボードの状態取得
 	auto kb = m_keyboard->GetState();
 	if (kb.Escape)
 		PostQuitMessage(0);
 
+	// Aキーで左へ
 	if (kb.A)
 	{
-		m_screenPos.x = m_screenPos.x - 2.5f;
+		m_playerPos.x = m_playerPos.x - 3.5f;
 	}
+	// Dキーで右へ
 	if (kb.D)
 	{
-		m_screenPos.x = m_screenPos.x + 2.5f;
+		m_playerPos.x = m_playerPos.x + 3.5f;
+	}
+	// Wキーでジャンプ
+	if (kb.W)
+	{
+		m_playerV.y = m_playerV.x - 14.5f;
 	}
 
-	//*
+	/* ===== ↑あとでプレイヤクラスに移動するもの↑ ===== */
+
+
+
+	/* ===== ↓あとでオブスタクルクラスに移動するもの↓ ===== */
+
+	// 速度に加速度を足す
+	m_obstacleV.x += m_obstacleA.x;
+	m_obstacleV.y += m_obstacleA.y;
+	// 位置に速度を足す
+	m_obstaclePos.x += m_obstacleV.x;
+	m_obstaclePos.y += m_obstacleV.y;
+	// 落下速度が早すぎたらちょうどいいとこで加速が止まる
+	if (m_obstacleV.y > 50)
+	{
+		m_obstacleV.y = 50;
+	}
+
+	// 地面との雑判定
+	if (m_obstaclePos.y > landHeight-64)
+	{
+		m_obstaclePos.y = landHeight-64;
+		m_obstacleV.y = 0;
+	}
+
+	/* ===== ↑あとでオブスタクルクラスに移動するもの↑===== */
+
 }
 
 // Draws the scene.
@@ -95,12 +157,17 @@ void Game::Render()
 
 
 	//* スプライトバッチの描画
+	// プレイヤの描画
 	m_spriteBatch->Begin();
-
-	m_spriteBatch->Draw(m_texture.Get(), m_screenPos, nullptr, Colors::White,
+	m_spriteBatch->Draw(m_playerTexture.Get(), m_playerPos, nullptr, Colors::White,
+		0.f, m_origin);	
+	// 障害物の描画
+	m_spriteBatch->Draw(m_obstacleTexture.Get(), m_obstaclePos, nullptr, Colors::White,
 		0.f, m_origin);
-
 	m_spriteBatch->End();
+
+
+
 
 	//*
 
@@ -266,22 +333,40 @@ void Game::CreateDevice()
 
 
 	//* スプライトバッチの何かしら
+	// プレイヤの
 	m_spriteBatch = std::make_unique<SpriteBatch>(m_d3dContext.Get());
 
 	ComPtr<ID3D11Resource> resource;
+	// プレイヤのテクスチャ読み込み
 	DX::ThrowIfFailed(
 		CreateWICTextureFromFile(m_d3dDevice.Get(), L"Images\\player.png",
 			resource.GetAddressOf(),
-			m_texture.ReleaseAndGetAddressOf()));
+			m_playerTexture.ReleaseAndGetAddressOf()));
+	// 障害物のテクスチャ読み込み
+	DX::ThrowIfFailed(
+		CreateWICTextureFromFile(m_d3dDevice.Get(), L"Images\\obstacle.png",
+			resource.GetAddressOf(),
+			m_obstacleTexture.ReleaseAndGetAddressOf()));
 
-	ComPtr<ID3D11Texture2D> cat;
-	DX::ThrowIfFailed(resource.As(&cat));
+	ComPtr<ID3D11Texture2D> player;
+	DX::ThrowIfFailed(resource.As(&player));
 
-	CD3D11_TEXTURE2D_DESC catDesc;
-	cat->GetDesc(&catDesc);
+	CD3D11_TEXTURE2D_DESC playerDesc;
+	player->GetDesc(&playerDesc);
 
-	m_origin.x = float(catDesc.Width / 2);
-	m_origin.y = float(catDesc.Height / 2);
+	m_origin.x = float(playerDesc.Width / 2);
+	m_origin.y = float(playerDesc.Height / 2);
+
+
+
+	ComPtr<ID3D11Texture2D> obstacle;
+	DX::ThrowIfFailed(resource.As(&obstacle));
+
+	CD3D11_TEXTURE2D_DESC obstacleDesc;
+	obstacle->GetDesc(&obstacleDesc);
+
+	m_origin.x = float(obstacleDesc.Width / 2);
+	m_origin.y = float(obstacleDesc.Height / 2);
 	//*
 
 }
@@ -405,8 +490,12 @@ void Game::CreateResources()
     // TODO: Initialize windows-size dependent objects here.
 
 	//* スクリーン座標か何か
-	m_screenPos.x = backBufferWidth / 2.f;
-	m_screenPos.y = backBufferHeight / 2.f;
+	//m_playerPos.x = backBufferWidth / 2.f;
+	//m_playerPos.y = backBufferHeight / 2.f;
+	m_playerPos.x = 100;
+	m_playerPos.y = 100;
+	m_obstaclePos.x = 500;
+	m_obstaclePos.y = 400;
 	//*
 }
 

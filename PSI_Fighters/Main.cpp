@@ -178,7 +178,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
     case WM_ACTIVATEAPP:
 
-		//*
+	//*
 		Keyboard::ProcessMessage(message, wParam, lParam);
 
         if (game)
@@ -193,7 +193,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             }
         }
         break;
-
 	//*
 	case WM_INPUT:
 	case WM_MOUSEMOVE:
