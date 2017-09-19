@@ -19,6 +19,7 @@
 using namespace DirectX;
 using namespace DirectX::SimpleMath;
 
+
 ////----------------------------------------------------------------------
 ////! @関数名：Player
 ////!
@@ -48,7 +49,7 @@ Player::~Player()
 
 
 ////----------------------------------------------------------------------
-////! @関数名：Init
+////! @関数名：Initialize
 ////!
 ////! @役割：プレイヤの初期化処理
 ////!
@@ -66,6 +67,10 @@ void Player::Initialize(ID3D11Device* device)
 
 	// 重力加速度
 	m_playerA.y = gravity;
+
+	// 初期位置
+	m_playerPos.x = 100;
+	m_playerPos.y = 100;
 }
 
 

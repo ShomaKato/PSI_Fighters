@@ -47,12 +47,6 @@ private:
 	DirectX::SimpleMath::Vector2 m_playerA;
 	// 座標
 	DirectX::SimpleMath::Vector2 m_playerPos;
-	//// キーボード
-	//std::unique_ptr<DirectX::Keyboard> m_keyboard;
-	////// マウス
-	//std::unique_ptr<DirectX::Mouse> m_mouse;
-	//// 多分、マウス
-	//DirectX::Mouse::State mousePos;
 
 	// 仮の地面
 	int landHeight = 500;

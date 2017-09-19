@@ -8,6 +8,7 @@
 #include "SpriteBatch.h"
 #include "SimpleMath.h"
 #include "Player.h"
+#include "Obstacle.h"
 #include <Keyboard.h>
 #include <Mouse.h>
 
@@ -106,27 +107,28 @@ private:
 	/* ===== ↑あとでプレイヤクラスに移動するもの↑ ===== */
 
 	Player* m_player;
+	Obstacle* m_obstacle;
 
 
 
 	/* ===== ↓あとでオブスタクルクラスに移動するもの↓ ===== */
 
-	// 障害物テクスチャ
-	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_obstacleTexture;
-	// 速度
-	DirectX::SimpleMath::Vector2 m_obstacleV;
-	// 加速度
-	DirectX::SimpleMath::Vector2 m_obstacleA;
-	// 座標
-	DirectX::SimpleMath::Vector2 m_obstaclePos;
-	//元画像のｘ座標
-	int grp_x;
-	//元画像のｙ座標
-	int grp_y;
-	//元画像の幅
-	int grp_w;
-	//元画像の高さ
-	int grp_h;
+	//// 障害物テクスチャ
+	//Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_obstacleTexture;
+	//// 速度
+	//DirectX::SimpleMath::Vector2 m_obstacleV;
+	//// 加速度
+	//DirectX::SimpleMath::Vector2 m_obstacleA;
+	//// 座標
+	//DirectX::SimpleMath::Vector2 m_obstaclePos;
+	////元画像のｘ座標
+	//int grp_x;
+	////元画像のｙ座標
+	//int grp_y;
+	////元画像の幅
+	//int grp_w;
+	////元画像の高さ
+	//int grp_h;
 
 	/* ===== ↑あとでオブスタクルクラスに移動するもの↑===== */
 
