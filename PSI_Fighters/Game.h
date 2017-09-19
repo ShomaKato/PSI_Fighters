@@ -7,6 +7,7 @@
 #include "StepTimer.h"
 #include "SpriteBatch.h"
 #include "SimpleMath.h"
+#include "Player.h"
 #include <Keyboard.h>
 #include <Mouse.h>
 
@@ -86,20 +87,25 @@ private:
 
 	/* ===== ↓あとでプレイヤクラスに移動するもの↓ ===== */
 
-	// プレイヤテクスチャ
-	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_playerTexture;
-	// 速度
-	DirectX::SimpleMath::Vector2 m_playerV;
-	// 加速度
-	DirectX::SimpleMath::Vector2 m_playerA;
-	// 座標
-	DirectX::SimpleMath::Vector2 m_playerPos;
-	// キーボード
-	std::unique_ptr<DirectX::Keyboard> m_keyboard;
-	//// マウス
-	//std::unique_ptr<Mouse> m_mouse;
+	//// プレイヤテクスチャ
+	//Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_playerTexture;
+	//// 速度
+	//DirectX::SimpleMath::Vector2 m_playerV;
+	//// 加速度
+	//DirectX::SimpleMath::Vector2 m_playerA;
+	//// 座標
+	//DirectX::SimpleMath::Vector2 m_playerPos;
+
+
+	////* 仮の地面
+	//int landHeight = 500;
+
+	////* 重力
+	//float gravity = 0.5f;
 
 	/* ===== ↑あとでプレイヤクラスに移動するもの↑ ===== */
+
+	Player* m_player;
 
 
 
@@ -113,8 +119,23 @@ private:
 	DirectX::SimpleMath::Vector2 m_obstacleA;
 	// 座標
 	DirectX::SimpleMath::Vector2 m_obstaclePos;
+	//元画像のｘ座標
+	int grp_x;
+	//元画像のｙ座標
+	int grp_y;
+	//元画像の幅
+	int grp_w;
+	//元画像の高さ
+	int grp_h;
 
 	/* ===== ↑あとでオブスタクルクラスに移動するもの↑===== */
 
+
+	// キーボード
+	std::unique_ptr<DirectX::Keyboard> m_keyboard;
+	std::unique_ptr<DirectX::Keyboard::KeyboardStateTracker> m_keyboardTracker;
+	// マウス
+	std::unique_ptr<DirectX::Mouse> m_mouse;
+	std::unique_ptr<DirectX::Mouse::State> m_mousePos;
 
 };

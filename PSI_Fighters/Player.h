@@ -16,6 +16,8 @@
 // ヘッダのインクルード
 #include <SpriteBatch.h>
 #include <SimpleMath.h>
+#include <Keyboard.h>
+#include <Mouse.h>
 
 
 //////////////////////
@@ -29,21 +31,34 @@ public:
 	~Player();
 
 	// 初期化関数
-	void Init();
+	void Initialize(ID3D11Device* device);
 	// 更新関数
-	void Update();
+	void Update(DirectX::Keyboard* keyboard, DirectX::Keyboard::KeyboardStateTracker* keyboardTracker);
 	// 描画関数
-	void Render();
+	void Render(DirectX::SpriteBatch* spriteBatch);
 
 private:
-	// テクスチャ
-	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_texture;
 
-	// スプライトバッチ
-	std::unique_ptr<DirectX::SpriteBatch> m_spriteBatch;
+	// プレイヤテクスチャ
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_playerTexture;
+	// 速度
+	DirectX::SimpleMath::Vector2 m_playerV;
+	// 加速度
+	DirectX::SimpleMath::Vector2 m_playerA;
+	// 座標
+	DirectX::SimpleMath::Vector2 m_playerPos;
+	//// キーボード
+	//std::unique_ptr<DirectX::Keyboard> m_keyboard;
+	////// マウス
+	//std::unique_ptr<DirectX::Mouse> m_mouse;
+	//// 多分、マウス
+	//DirectX::Mouse::State mousePos;
 
-	// 位置座標
-	DirectX::SimpleMath::Vector2 m_pos;
+	// 仮の地面
+	int landHeight = 500;
+
+	// 重力
+	float gravity = 0.5f;
 
 };
 
